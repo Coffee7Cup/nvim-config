@@ -1,37 +1,31 @@
-vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
-vim.g.mapleader = " "
+vim.cmd("set expandtab")
+vim.cmd("set tabstop=2")
+vim.cmd("set shiftwidth=2")
+vim.cmd("set softtabstop=2")
+--the below is not working need to fix
+vim.keymap.set("n", "<End>", "$")
+vim.keymap.set("i", "<End>", "<C-o>$")
+vim.keymap.set("v", "<End>", "$")
+vim.g.mapleader=" "
+vim.cmd("set number")
 
--- bootstrap lazy and all plugins
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+require("config.lazy")
 
-if not vim.uv.fs_stat(lazypath) then
-  local repo = "https://github.com/folke/lazy.nvim.git"
-  vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
-end
+-- Normal mode: Move current line down
+vim.keymap.set("n", "<A-Down>", ":m .+1<CR>==", { noremap = true, silent = true })
 
-vim.opt.rtp:prepend(lazypath)
+-- Visual mode: Move selected lines down
+vim.keymap.set("v", "<A-Down>", ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
 
-local lazy_config = require "configs.lazy"
+-- Normal mode: Move current line up
+vim.keymap.set("n", "<A-Up>", ":m .-2<CR>==", { noremap = true, silent = true })
 
--- load plugins
-require("lazy").setup({
-  {
-    "NvChad/NvChad",
-    lazy = false,
-    branch = "v2.5",
-    import = "nvchad.plugins",
-  },
+-- Visual mode: Move selected lines up
+vim.keymap.set("v", "<A-Up>", ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
 
-  { import = "plugins" },
-}, lazy_config)
+vim.keymap.set("n", "<leader-Down>", "yyp", { noremap = true, silent = true })
+vim.keymap.set("v", "<leader-Down>", "y'>p", { noremap = true, silent = true })
 
--- load theme
-dofile(vim.g.base46_cache .. "defaults")
-dofile(vim.g.base46_cache .. "statusline")
+vim.keymap.set("n", "<leader-Up>", "yyP", { noremap = true, silent = true })
+vim.keymap.set("v", "<leader-Up>", "y'<P", { noremap = true, silent = true })
 
-require "options"
-require "autocmds"
-
-vim.schedule(function()
-  require "mappings"
-end)
